@@ -4,7 +4,6 @@ import pathlib
 from src.apps import hello_world, linked_selections
 
 _APPS_ROOT = pathlib.Path(__file__).parent / "apps"
-
 ROUTES = {
     "hello-world-file": _APPS_ROOT / "hello_world.py",
     "hello-world": hello_world.view,

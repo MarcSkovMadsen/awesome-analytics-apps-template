@@ -15,7 +15,7 @@ from holoviews import opts
 from plotly.data import iris
 
 from src.shared import colors
-from src.templates import ListTemplate
+from src.shared.templates import ListTemplate
 
 pn.extension("plotly")
 hv.extension("bokeh", "plotly")

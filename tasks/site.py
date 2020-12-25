@@ -9,9 +9,9 @@ from invoke import task
 from src import site  # pylint: disable=import-outside-toplevel
 
 
-@task(aliases=("panel",))
-def run_server(
+@task()
+def serve(
     _,
 ):
-    """Starts the Panel server"""
-    site.run_server()
+    """Starts the Panel server and serves the apps"""
+    site.serve()

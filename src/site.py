@@ -6,14 +6,13 @@ import platform
 import panel as pn
 
 from src import config
+from src.routes import ROUTES
 from src.shared import modifications
-
-from .routes import ROUTES
 
 modifications.apply()
 
 
-def run_server():
+def serve():
     address = os.getenv("BOKEH_ADDRESS", "localhost")
     if platform.system() == "Windows":
         pn.serve(
@@ -35,4 +34,4 @@ def run_server():
 
 
 if __name__ == "__main__":
-    run_server()
+    serve()
