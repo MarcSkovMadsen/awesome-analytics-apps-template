@@ -11,7 +11,6 @@ from src.shared import modifications
 
 modifications.apply()
 
-
 def serve():
     address = os.getenv("BOKEH_ADDRESS", "localhost")
     if platform.system() == "Windows":
@@ -21,6 +20,7 @@ def serve():
             dev=False,
             title=config.SITE_NAME,
             address=address,
+            static_dirs=config.STATIC_DIRS,
         )
     else:
         pn.serve(
@@ -30,8 +30,8 @@ def serve():
             title=config.SITE_NAME,
             address=address,
             num_procs=4,
+            static_dirs=config.STATIC_DIRS,
         )
-
 
 if __name__ == "__main__":
     serve()

@@ -31,3 +31,4 @@ class GalleryTemplate(_FastGalleryTemplate):
     __doc__ = _FastGalleryTemplate.__doc__
 
     site = param.String(SITE_NAME)
+    title = param.String("Gallery")
