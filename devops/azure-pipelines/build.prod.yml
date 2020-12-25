@@ -1,0 +1,186 @@
+trigger:
+  branches:
+    include:
+    - dev
+    - master
+  paths:
+    exclude:
+    - requirements/local.txt
+    - requirements/base.txt
+    - requirements/production.txt
+    - devops/azure-pipelines/build.base.yml
+    - devops/docker/Dockerfile.base
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+variables:
+- group: odl-devops-global-variables
+- name: pythonVersion
+  value: 3.7
+- name: environment
+  value: ${{replace(variables['Build.SourceBranchName'], 'master', 'prod')}}
+- name: registry
+  value: datalakek8sacr$(environment).azurecr.io
+- name: azureSubscription
+  value: datalake-acr-sc-$(environment)
+- name: azureLoginName
+  value: datalakek8sacr$(environment)
+- name: imageShortName
+  value: prod
+- name: imageFullName
+  value: $(registry)/trading-analytics/us-trading
+- name: imageShortNameTest
+  value: test
+- name: imageFullNameTest
+  value: $(registry)/trading-analytics/us-trading-test
+- name: appFolder
+  value: us_trading
+- name: kubernetesServiceConnection
+  ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+    value: odl-k8s-blue-trading-sc-prod
+  ${{ if eq(variables['Build.SourceBranchName'], 'prod') }}:
+    value: odl-k8s-blue-trading-sc-prod
+  ${{ if eq(variables['Build.SourceBranchName'], 'dev') }}:
+    value: odl-k8s-green-trading-sc-dev
+- name: kubernetesNameSpace
+  value: 'odl-trading-analytics-ns'
+- ${{ if eq(variables['Build.SourceBranchName'], 'master') }}:
+  - name: host
+    value: trading-analytics.de-prod.dk
+  - name: secretName
+    value: trading-analytics-ingress-tls
+- ${{ if eq(variables['Build.SourceBranchName'], 'prod') }}:
+  - name: host
+    value: trading-analytics.de-prod.dk
+  - name: secretName
+    value: trading-analytics-ingress-tls
+- ${{ if eq(variables['Build.SourceBranchName'], 'test') }}:
+  - name: host
+    value: trading-analytics-test.de-prod.dk
+  - name: secretName
+    value: trading-analytics-test-ingress-tls
+- ${{ if eq(variables['Build.SourceBranchName'], 'dev') }}:
+  - name: host
+    value: trading-analytics-dev.de-prod.dk
+  - name: secretName
+    value: trading-analytics-dev-ingress-tls
+
+stages:
+- stage: all
+  jobs:
+  - deployment: All
+    displayName: All
+    environment: 'odl-${{variables.environment}}-env.odl-trading-analytics-ns'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - script: |
+              echo pythonVersion: ${{variables.pythonVersion}}
+              echo environment: ${{variables.environment}}
+              echo registry: ${{variables.registry}}
+              echo azureSubscription: ${{variables.azureSubscription}}
+              echo azureLoginName: ${{variables.azureLoginName}}
+              echo imageShortName: ${{variables.imageShortName}}
+              echo imageFullName: ${{variables.imageFullName}}
+              echo imageShortNameTest: ${{variables.imageShortNameTest}}
+              echo imageFullNameTest: ${{variables.imageFullNameTest}}
+              echo appFolder: ${{variables.appFolder}}
+              echo kubernetesServiceConnection: ${{variables.kubernetesServiceConnection}}
+              echo kubernetesNameSpace: ${{variables.kubernetesNameSpace}}
+              echo host: ${{variables.host}}
+            displayName: Echo Variables
+
+          - task: UsePythonVersion@0
+            displayName: 'Use Python ${{variables.pythonVersion}}'
+            inputs:
+              versionSpec: ${{variables.pythonVersion}}
+
+          - task: AzureCLI@1
+            displayName: 'Login to Azure'
+            inputs:
+              azureSubscription: ${{variables.azureSubscription}}
+              scriptLocation: inlineScript
+              inlineScript: |
+                az acr login --name ${{variables.azureLoginName}}
+
+          - script: |
+              pip install invoke
+            displayName: Install Invoke
+
+          - script: |
+              sed -i 's/datalakek8sacrdev.azurecr.io/${{variables.registry}}/g' devops/docker/Dockerfile.*
+              sed -i 's/URL_BASE_PATHNAME = "\/"/URL_BASE_PATHNAME = "\/us-trading\/dash\/"/g' sites/dash/app.py
+              sed -i 's/PREFIX = ""/PREFIX = "\/us-trading\/panel"/g' sites/panel/app.py
+            displayName: Prepare Dockerfiles
+
+          - script: |
+              invoke docker.build --registry=${{variables.registry}} --image=${{variables.imageShortName}} --tag=latest
+            displayName: Docker build ${{variables.imageShortName}}
+
+          - script: |
+              invoke docker.build --registry=${{variables.registry}} --image=${{variables.imageShortNameTest}} --tag=latest
+            displayName: Docker build ${{variables.imageShortNameTest}}
+
+          - script: |
+              id=$(docker create ${{variables.imageFullNameTest}}:latest)
+              docker cp $id:/app/${{variables.appFolder}}/test_results/. test_results
+              docker rm -v $id
+              ls test_results
+            displayName: Export Test Results from test image
+            condition: succeededOrFailed()
+
+          - task: PublishTestResults@2
+            displayName: 'Publish Pytest Results'
+            inputs:
+              testResultsFiles: |
+                test_results/test-results-${{variables.appFolder}}.xml
+              failTaskOnFailedTests: false
+              testRunTitle: 'Pytest'
+            condition: succeededOrFailed()
+
+          - task: PublishTestResults@2
+            displayName: 'Publish Pylint Results'
+            inputs:
+              testResultsFiles: |
+                test_results/pylint-results-${{variables.appFolder}}.xml
+              failTaskOnFailedTests: false
+              testRunTitle: 'Pylint'
+            condition: succeededOrFailed()
+
+          - task: PublishTestResults@2
+            displayName: 'Publish MyPy Results'
+            inputs:
+              testResultsFiles: |
+                test_results/mypy-results-${{variables.appFolder}}.xml
+              failTaskOnFailedTests: false
+              testRunTitle: 'MyPy'
+            condition: succeededOrFailed()
+
+          - task: AzureCLI@1
+            displayName: 'Push Image to the Container Registry'
+            inputs:
+              azureSubscription: ${{variables.azureSubscription}}
+              scriptLocation: inlineScript
+              inlineScript: |
+                docker push ${{variables.imageFullName}}:latest
+                docker tag ${{variables.imageFullName}}:latest ${{variables.imageFullName}}:$(Build.BuildId)
+                docker push ${{variables.imageFullName}}:$(Build.buildId)
+
+          - script: |
+              sed -i 's/:latest/:$(Build.BuildId)/g' devops/kubernetes/*.yaml
+              sed -i 's/datalakek8sacrdev.azurecr.io/${{variables.registry}}/g' devops/kubernetes/*.yaml
+              sed -i 's/trading-analytics-dev.de-prod.dk/${{variables.host}}/g' devops/kubernetes/*.yaml
+              sed -i 's/dev/${{variables.environment}}/g' devops/kubernetes/*.yaml
+            displayName: Prepare Manifest files
+
+
+          - task: KubernetesManifest@0
+            displayName: 'Deploy to Kubernetes'
+            inputs:
+              action: 'deploy'
+              kubernetesServiceConnection: ${{ variables.kubernetesServiceConnection }}
+              namespace: ${{variables.kubernetesNamespace}}
+              manifests: 'devops/kubernetes/*.yaml'

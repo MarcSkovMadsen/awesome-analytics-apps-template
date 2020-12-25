@@ -1,0 +1,5 @@
+FROM registry.hub.docker.com/awesome-panel-starter-base:latest
+
+ADD . ./
+
+ENTRYPOINT [ "bash" ]

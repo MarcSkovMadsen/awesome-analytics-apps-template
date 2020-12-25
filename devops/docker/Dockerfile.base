@@ -1,0 +1,25 @@
+FROM python:3.7.8-slim-stretch
+
+WORKDIR /site
+ENV PYTHONPATH = /site
+
+# These enviroment variable ensures that the python output is sent straight
+# to the terminal without buffering it first
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONIOENCODING UTF-8
+
+ENV BOKEH_ADDRESS="0.0.0.0"
+
+# Expose the ports the the server will be using.
+EXPOSE 80
+EXPOSE 5006
+EXPOSE 5007
+
+# Install the required Python packages
+# --------------------------------
+
+ADD . ./requirements/
+RUN pip install pip==20.3.3 && pip install --no-cache-dir -r requirements/production.txt &&\
+    rm -rf requirements
+
+ENTRYPOINT [ "bash" ]

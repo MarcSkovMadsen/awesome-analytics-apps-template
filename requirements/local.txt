@@ -1,0 +1,6 @@
+-r ./base.txt
+-r ./test.txt
+
+notebook==6.1.5
+
+# Hack for now trading_analytics package needs to update version

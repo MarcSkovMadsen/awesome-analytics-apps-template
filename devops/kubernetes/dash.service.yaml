@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: us-trading-dash
+  namespace: odl-trading-analytics-ns
+  labels:
+    app: us-trading-dash
+    env: dev
+spec:
+  ports:
+  - port: 80
+    targetPort: 14036
+    protocol: TCP
+  selector:
+    app: us-trading-dash
+    env: dev

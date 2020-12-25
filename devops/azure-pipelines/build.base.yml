@@ -1,0 +1,80 @@
+trigger:
+  branches:
+    include:
+    - dev
+    - master
+  paths:
+    include:
+    - requirements/base.txt
+    - requirements/production.txt
+    - devops/azure-pipelines/build.base.yml
+    - devops/docker/Dockerfile.base
+
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+variables:
+  pythonVersion: 3.7
+  environment: ${{replace(variables['Build.SourceBranchName'], 'master', 'prod')}}
+  registry: datalakek8sacr$(environment).azurecr.io
+  azureSubscription: datalake-acr-sc-$(environment)
+  azureLoginName: datalakek8sacr$(environment)
+  imageShortName: base
+  imageFullName: datalakek8sacr$(environment).azurecr.io/trading-analytics/us-trading-base
+
+steps:
+
+- script: |
+    echo pythonVersion: ${{variables.pythonVersion}}
+    echo environment: ${{variables.environment}}
+    echo registry: ${{variables.registry}}
+    echo azureSubscription: ${{variables.azureSubscription}}
+    echo azureLoginName: ${{variables.azureLoginName}}
+    echo imageShortName: ${{variables.imageShortName}}
+    echo imageFullName: ${{variables.imageFullName}}
+  displayName: Echo Variables
+
+- task: UsePythonVersion@0
+  displayName: 'Use Python ${{variables.pythonVersion}}'
+  inputs:
+    versionSpec: ${{variables.pythonVersion}}
+
+- task: AzureCLI@1
+  displayName: 'Login'
+  inputs:
+    azureSubscription: ${{variables.azureSubscription}}
+    scriptLocation: inlineScript
+    inlineScript: |
+      az acr login --name ${{variables.azureLoginName}}
+
+- script: |
+    pip install invoke
+  displayName: Install Invoke
+
+- task: PipAuthenticate@1
+  displayName: 'Pip Authenticate'
+  name: Pip
+  inputs:
+    artifactFeeds: OrstedCode
+
+- script: |
+    sed -i 's/datalakek8sacrdev.azurecr.io/${{variables.registry}}/g' devops/docker/Dockerfile.*
+  displayName: Prepare Dockerfiles
+
+- script: |
+    invoke docker.build --registry=${{variables.registry}} --image=${{variables.imageShortName}} --tag=latest
+  displayName: Docker build ${{variables.imageShortName}}
+  env:
+    # ORSTED_CODE_EXTRA_INDEX_URL: ${PIP_INDEX_URL}
+    ORSTED_CODE_EXTRA_INDEX_URL: https://masma:dw4xygp5km3btbw5kavi3jpfk2tokvlyadrm2y2l5qf5oz545ajq@pkgs.dev.azure.com/dongenergy-p/8456737b-c779-43d3-b75d-ff17631a3344/_packaging/OrstedCode/pypi/simple/
+
+
+- task: AzureCLI@1
+  displayName: 'Push Image to the Container Registry'
+  inputs:
+    azureSubscription: ${{variables.azureSubscription}}
+    scriptLocation: inlineScript
+    inlineScript: |
+      docker push ${{variables.imageFullName}}:latest
+      docker tag ${{variables.imageFullName}}:latest ${{variables.imageFullName}}:$(Build.BuildId)
+      docker push ${{variables.imageFullName}}:$(Build.buildId)

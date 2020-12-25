@@ -1,0 +1,17 @@
+# Image: site-test:latest
+FROM registry.hub.docker.com/awsome-panel-starter:latest
+
+# Install test requirements
+RUN pip install -r requirements/test.txt
+
+# Run tests but dont fail.
+RUN mkdir -p test_results; exit 0
+RUN invoke test.pylint --test-results; exit 0
+RUN rm -rf .mypy_cache/; exit 0
+RUN invoke test.pytest --test-results --skip-integrationtest; exit 0
+
+# Remove empty test_results files which can cause problems for Azure Pipelines
+RUN touch test_results/dummy && find test_results -size 0 -print0 |xargs -0 rm --
+RUN ls test_results
+
+ENTRYPOINT ["bash"]

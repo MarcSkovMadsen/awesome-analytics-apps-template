@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: us-trading-panel
+  namespace: odl-trading-analytics-ns
+  labels:
+    app: us-trading-panel
+    env: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: us-trading-panel
+  template:
+    metadata:
+      labels:
+        app: us-trading-panel
+        env: dev
+    spec:
+      containers:
+      - name: us-trading
+        image: datalakek8sacrdev.azurecr.io/trading-analytics/us-trading:latest
+        ports:
+        - containerPort: 5007
+        resources:
+          requests:
+            memory: "0.5Gi"
+            cpu: "0.5"
+          limits:
+            memory: "4Gi"
+            cpu: "4.0"
+        command:
+          - python
+        env:
+          - name: TA_CONFIG_FILE
+            value: /app/trading_analytics/.environment/config.dev.ini
+          - name: BOKEH_ALLOW_WS_ORIGIN
+            value: trading-analytics-dev.de-prod.dk
+        args:
+          - sites/panel/app.py
