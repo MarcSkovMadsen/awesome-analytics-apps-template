@@ -12,23 +12,26 @@ from awesome_panel_extensions.frameworks.fast.templates.fast_template import (
     FastTemplate as _FastTemplate,
 )
 
-from src.config import SITE_NAME
+from src.shared import config
+from src.shared._menu import MENU
 
 
 class ListTemplate(_FastTemplate):
     __doc__ = _FastTemplate.__doc__
 
-    site = param.String(SITE_NAME)
+    site = param.String(config.site_name)
+    sidebar_footer = param.String(MENU)
 
 
 class GridTemplate(_FastGridTemplate):
     __doc__ = _FastGridTemplate.__doc__
 
-    site = param.String(SITE_NAME)
+    site = param.String(config.site_name)
+    sidebar_footer = param.String(MENU)
 
 
 class GalleryTemplate(_FastGalleryTemplate):
     __doc__ = _FastGalleryTemplate.__doc__
 
-    site = param.String(SITE_NAME)
+    site = param.String(config.site_name)
     title = param.String("Gallery")

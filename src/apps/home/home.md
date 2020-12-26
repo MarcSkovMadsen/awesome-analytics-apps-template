@@ -1,6 +1,9 @@
 # Home
 
-abcd
+This site is built using Panel.
 
-## Section Two
+## Flexibility
 
+This site contains apps developed in a combination of `.py` files and notebooks.
+
+Checkout the [Gallery](gallery).

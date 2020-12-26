@@ -5,33 +5,33 @@ import platform
 
 import panel as pn
 
-from src import config
-from src.routes import ROUTES
-from src.shared import modifications
+from src.shared import config, modifications
 
 modifications.apply()
+
 
 def serve():
     address = os.getenv("BOKEH_ADDRESS", "localhost")
     if platform.system() == "Windows":
         pn.serve(
-            ROUTES,
+            config.routes,
             port=5007,
             dev=False,
-            title=config.SITE_NAME,
+            title=config.site_name,
             address=address,
-            static_dirs=config.STATIC_DIRS,
+            static_dirs=config.static_dirs,
         )
     else:
         pn.serve(
-            ROUTES,
+            config.routes,
             port=5007,
             dev=False,
-            title=config.SITE_NAME,
+            title=config.site_name,
             address=address,
             num_procs=4,
-            static_dirs=config.STATIC_DIRS,
+            static_dirs=config.static_dirs,
         )
+
 
 if __name__ == "__main__":
     serve()

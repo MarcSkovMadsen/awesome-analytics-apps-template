@@ -1,0 +1,8 @@
+site_name = "Awesome Panel Starter"
+site_prefix = ""
+
+color_primary = "#A01346"
+color_cycle = ["#A01346"]
+
+[static_dirs]
+assets = "src/assets"

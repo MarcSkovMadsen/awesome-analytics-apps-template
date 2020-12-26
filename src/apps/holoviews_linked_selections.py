@@ -14,7 +14,7 @@ import plotly.io as pio
 from holoviews import opts
 from plotly.data import iris
 
-from src.shared import colors
+from src.shared import config
 from src.shared.templates import ListTemplate
 
 pn.extension("plotly")
@@ -38,8 +38,8 @@ def _plotly_hooks(plot, element):
 IRIS_DATASET = iris()
 OPTS: Dict[str, Dict[str, Any]] = {
     "all": {
-        "scatter": {"color": colors.PRIMARY, "responsive": True, "size": 10, "height": 400},
-        "hist": {"color": colors.PRIMARY, "responsive": True, "height": 400},
+        "scatter": {"color": config.color_primary, "responsive": True, "size": 10, "height": 400},
+        "hist": {"color": config.color_primary, "responsive": True, "height": 400},
     },
     "bokeh": {
         "scatter": {"tools": ["hover"], "active_tools": ["box_select"]},
@@ -152,9 +152,9 @@ def view():
 
 if __name__.startswith("bokeh"):
     # Run the development server
-    # python -m panel serve 'src/apps/linked_selections/linked_selections.py' --dev --show
+    # python -m panel serve 'src/apps/holoviews_linked_selections.py' --dev --show
     view().servable()
 if __name__ == "__main__":
     # Run the server. Useful for integrated debugging in your Editor or IDE.
-    # python 'src/apps/linked_selections/linked_selections.py'
+    # python 'src/apps/holoviews_linked_selections.py'
     view().show(port=5007)

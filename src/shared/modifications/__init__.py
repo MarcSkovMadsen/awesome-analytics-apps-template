@@ -11,6 +11,9 @@ from ._server import get_server
 def apply():
     """Applies all modifications.
 
+    - Panel fixes
+    - Load of awesome-panel-assets .js lib
+
     Run this before starting the server"""
     # Improvement to be able to pn.serve .py and ipynb files
     pn.io.server.get_server = get_server

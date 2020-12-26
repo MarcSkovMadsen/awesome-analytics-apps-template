@@ -1,13 +1,50 @@
 """Provides the following models used to create the site
 
+- Application
 - Person
 - Resource
+- SiteConfig
 """
 # pylint: disable=unused-import
 
 # We provide the models here in order to be able to (later) customize them
 
-# Will later be renamed to Person in the awesome-panel-extensions package
+from typing import Dict
+
+# Author will later be renamed to Person in the awesome-panel-extensions package
+import param
+from awesome_panel_extensions.site.application import Application
 from awesome_panel_extensions.site.author import Author as Person
 from awesome_panel_extensions.site.resource import Resource
-from awesome_panel_extensions.site.application import Application
+
+
+class SiteConfig(param.Parameterized):
+    """Can hold the configuration of a site"""
+
+    site_name = param.String("Awesome Panel Starter")
+
+    color_primary = param.String("#A01346")
+    color_cycle = param.List(["#A01346"])
+
+    site_prefix = param.String("")
+
+    assets_prefix = param.String()
+    avatar_prefix = param.String()
+    thumbnails_prefix = param.String()
+    mp4_prefix = param.String()
+    code_prefix = param.String()
+
+    static_dirs = param.Dict()
+
+    persons = param.Dict()
+    applications = param.Dict()
+
+    @property
+    def routes(self) -> Dict:
+        """Returns the routes to serve in the site
+
+        Returns:
+            Dict: The key is the url and the value the servable. Either a .py, .ipynb or a Callable
+        """
+        # pylint: disable=not-an-iterable, no-member
+        return {app.url: app.servable for app in self.applications.values()}

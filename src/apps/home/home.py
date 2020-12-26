@@ -3,9 +3,11 @@ import pathlib
 
 import panel as pn
 from panel.pane import Markdown
+
 from src.shared.templates import ListTemplate
 
 SECTIONS_PATH = pathlib.Path(__file__).parent / "home.md"
+
 
 def _read_sections():
     sections = SECTIONS_PATH.read_text()
@@ -15,17 +17,21 @@ def _read_sections():
         sections[index] = Markdown("#" + sections[index])
     return sections
 
+
 SECTIONS = _read_sections()
+
 
 def view():
     """Returns the landing page of the site"""
     pn.config.sizing_mode = "stretch_width"
-    return ListTemplate(
-        title="Home", main=SECTIONS, main_max_width="900px"
-    )
+    return ListTemplate(title="Home", main=SECTIONS, main_max_width="900px")
 
 
 if __name__.startswith("bokeh"):
+    # Run the development server
+    # python -m panel serve 'src/apps/home/home.py' --dev --show
     view().servable()
 if __name__ == "__main__":
-    view().show(port=5007, open=False)
+    # Run the server. Useful for integrated debugging in your Editor or IDE.
+    # python 'src/apps/home/home.py'
+    view().show(port=5007)

@@ -43,6 +43,22 @@ pip install -r requirements/local.txt
 
 COMING UP
 
+## Setting the Python Path
+
+In order to be able to run `python` or `pytest` on specific files you need to set your `PYTHONPATH` to the root of the project.
+
+For example in bash like
+
+```bash
+export PYTHONPATH=/path/to/project
+```
+
+Here is a list of references for setting the PYTHONPATH
+
+- [VS Code](https://code.visualstudio.com/docs/python/environments#:~:text=pythonPath%20manually%20inside%20your%20User,Settings%2C%20with%20the%20appropriate%20interpreter)
+- [PyCharm](https://stackoverflow.com/questions/17198319/how-to-configure-custom-pythonpath-with-vm-and-pycharm)
+- [Spyder](https://docs.spyder-ide.org/current/projects.html): The root of your project is automatically added.
+
 ## Test the installation
 
 Test the installation by running the command
