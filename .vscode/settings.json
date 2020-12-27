@@ -1,7 +1,0 @@
-{
-    "python.pythonPath": ".venv\\Scripts\\python.exe",
-    "jupyter.jupyterServerType": "local",
-    "terminal.integrated.env.windows": {
-        "PYTHONPATH": "c:/repos/private/awesome-panel-starter",
-    }
-}
