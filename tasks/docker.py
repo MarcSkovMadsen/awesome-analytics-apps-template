@@ -191,12 +191,12 @@ Running the '{image}:{tag}' Docker image
 
     if config_file:
         command = (
-            f"docker run --env CONFIG_FILE={config_file} -p 8050:8050 "
+            f"docker run --env CONFIG_FILE={config_file} -p 5007:5007 "
             f"-it {image_configuration.registry}/{image_configuration.name}:{tag}"
         )
     else:
         command = (
-            f"docker run -p 8050:8050 "
+            f"docker run -p 5007:5007 "
             f"-it {image_configuration.registry}/{image_configuration.name}:{tag}"
         )
     print(command)
@@ -224,8 +224,8 @@ Running the '{image}:{tag}' Docker image
     )
     image_configuration = IMAGES.get(image, IMAGES["prod"])
     command = (
-        f"docker run -it -p 80:80 --entrypoint python "
-        f"{image_configuration.registry}/{image_configuration.name}:{tag} sites/panel/app.py"
+        f"docker run -it -p 5007:5007 --entrypoint python "
+        f"{image_configuration.registry}/{image_configuration.name}:{tag} src/site.py"
     )
     print(command)
     subprocess.run(command, check=True)
