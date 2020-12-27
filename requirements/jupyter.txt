@@ -1,5 +1,3 @@
--r ./base.txt
--r ./test.txt
-
 notebook==6.1.5
+jupyter_contrib_nbextensions==0.5.1 # To enable cleaning jupyter notebooks
 jupyterlab==2.2.9 # pyviz/jupyterlab_pyviz does not yet support 3.0

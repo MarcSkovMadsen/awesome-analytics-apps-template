@@ -11,8 +11,9 @@ including some with splines/ plots. I would also like to add some icons to make 
 """
 import numpy as np
 import panel as pn
-from src.shared.templates import GridTemplate
+
 from src.shared import config
+from src.shared.templates import GridTemplate
 
 STYLE = """
 .pn-stats-card div {
@@ -63,12 +64,12 @@ def view():
 
     for row in range(3, 5):
         for col in range(0, 3):
-            title = "Sensor " + str(3*row + col + 10)
+            title = "Sensor " + str(3 * row + col + 10)
             colors = [(0.7, ok_color), (1, ERROR_COLOR)]
             indicator = pn.indicators.Gauge(
                 name=title, value=65, bounds=(0, 100), colors=colors, align="center"
             )
-            template.main[2 * row - 3: 2 * row -1, 4 * col : 4 * col + 4] = pn.Row(
+            template.main[2 * row - 3 : 2 * row - 1, 4 * col : 4 * col + 4] = pn.Row(
                 pn.layout.HSpacer(),
                 indicator,
                 pn.layout.HSpacer(),

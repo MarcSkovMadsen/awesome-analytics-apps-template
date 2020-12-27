@@ -20,6 +20,7 @@ import pandas as pd
 import panel as pn
 import plotly.express as px
 from streamz.dataframe import DataFrame as sDataFrame
+
 from src.shared import config
 from src.shared.templates import GridTemplate
 

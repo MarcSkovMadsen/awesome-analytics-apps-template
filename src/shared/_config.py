@@ -4,12 +4,16 @@
 """
 
 import pathlib
+from typing import Union
 
 import toml
+
 from src.shared.models import Application, Person, SiteConfig
 
 
-def _create_site_config(config_root: pathlib.Path) -> SiteConfig:
+def _create_site_config(config_root: Union[str, pathlib.Path]) -> SiteConfig:
+    if isinstance(config_root, str):
+        config_root = pathlib.Path(config_root)
     persons_toml = config_root / "persons.toml"
     persons = Person.create_from_toml(persons_toml)
 

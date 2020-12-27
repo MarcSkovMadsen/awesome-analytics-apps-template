@@ -1,0 +1,14 @@
+# Used by the apps
+pandas==1.1.5
+holoviews==1.14.0
+hvplot==0.7.0
+plotly==4.14.1
+altair==4.1.0
+streamz==0.6.1
+
+# Needed for voila-gpx-viewer example
+bqplot=0.12.19
+ipyleaflet=0.13.3
+ipywidgets=7.6.1
+gpxpy=1.4.2
+srtm.py=0.3.6

@@ -1,4 +1,0 @@
--r ./base.txt
-
-# Gunicorn Works only on linux
-gunicorn==20.0.4
