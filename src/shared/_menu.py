@@ -1,4 +1,9 @@
-"""Provides the MENU html string appended to all templates"""
+"""Provides the MENU html string appended to all templates
+
+If you need some sort of custom MENU html string feel free to customize this code.
+
+Please note that the default MENU only works in [Fast](https://www.fast.design/) based templates.
+"""
 from typing import List
 
 from src.shared import config

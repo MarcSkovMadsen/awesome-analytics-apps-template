@@ -1,11 +1,12 @@
-"""Here we import the different task submodules/ collections"""
+"""Here we configure the cli tasks available via `invoke <namespace>.<command>`"""
 from invoke import Collection
 
-from . import docker, site, test
+from . import docker, notebook, site, test
 
 # pylint: disable=invalid-name
 # as invoke only recognizes lower case
 namespace = Collection()
 namespace.add_collection(site)
 namespace.add_collection(docker)
+namespace.add_collection(notebook)
 namespace.add_collection(test)

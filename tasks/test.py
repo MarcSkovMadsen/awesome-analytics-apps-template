@@ -13,6 +13,7 @@ from invoke import task
 TEST_FILES = " ".join(
     [
         "tests",
+        "src/apps",
     ]
 )
 TEST_RESULTS = "test_results"

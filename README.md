@@ -1,13 +1,11 @@
-# Awesome Panel Starter
+# Awesome Analytics Apps Starter
 
-The purpose of this project is to enable you quickly get up and running building your own
-site using Panel similarly to awesome-panel.org.
+The purpose of this project is to enable you quickly get up and running building your own site of awesome analytics apps. A site with a look and feel similar to [awesome-panel.org](https://awesome-panel.org).
 
-## Prerequisites
+The site can serve apps developed in
 
-- Python >= 3.7 from [python.org](https://www.python.org/) installed.
-- A recent version of [pip](https://pypi.org/project/pip/).
-- An editor like VS Code (recommended for DevOps), PyCharm (very good editor for Python), Spyder or similar.
+- code files (`.py`) or jupyter notebooks (`.ipynb`).
+- Bokeh, Panel or Jupyter IpyWidgets
 
 ## Installation
 
@@ -15,7 +13,20 @@ Below we will describe
 
 - installation via pip or conda.
 - how to test the installation
-- how to start the panel server
+- how to serve the site
+
+### Prerequisites
+
+- Python >= 3.7 from [python.org](https://www.python.org/) or Anaconda
+
+It will help a lot if you have experience
+
+- building apps using Bokeh or Panel.
+- working in
+  - an editor or IDE like Spyder, PyCharm or VS Code or
+  - a Jupyter Notebook environment.
+- working on the command line
+- working with virtual environments
 
 ### Install Using Pip
 
@@ -39,11 +50,19 @@ Install the requirements for local development and testing.
 pip install -r requirements/local.txt
 ```
 
-## Install using Conda
+### Install using Conda
 
 COMING UP
 
-## Setting the Python Path
+### Enabling Jupyterlab
+
+To use Jupyterlab you need to run
+
+```bash
+jupyter labextension install @pyviz/jupyterlab_pyviz
+```
+
+### Setting the Python Path
 
 In order to be able to run `python` or `pytest` on specific files you need to set your `PYTHONPATH` to the root of the project.
 
@@ -53,11 +72,11 @@ For example in bash like
 export PYTHONPATH=/path/to/project
 ```
 
-Here is a list of references for setting the PYTHONPATH
+There are many other ways to set environment variable and they depend on your workflow and use case.
 
 - [VS Code](https://code.visualstudio.com/docs/python/environments#:~:text=pythonPath%20manually%20inside%20your%20User,Settings%2C%20with%20the%20appropriate%20interpreter)
 - [PyCharm](https://stackoverflow.com/questions/17198319/how-to-configure-custom-pythonpath-with-vm-and-pycharm)
-- [Spyder](https://docs.spyder-ide.org/current/projects.html): The root of your project is automatically added.
+- [Spyder](https://docs.spyder-ide.org/current/projects.html): Nothing to do. The root of your project is automatically added.
 
 ## Test the installation
 
@@ -67,10 +86,84 @@ Test the installation by running the command
 invoke test.all
 ```
 
+If successfull you will see something like
+
+```bash
+All Tests Passed Successfully
+=============================
+```
+
 ## Start the Server
 
+Assuming your PYTHONPATH has been set to the root of the repository you can serve your site via
+
+```bash
+invoke site.serve
+```
+
+or
+
+```bash
+python src/site.py
+```
+
+or
+
+```bash
+python -m src.site
+```
+
+You should then be able to open [localhost:5007](https://localhost:5007) and check out the site.
 
 ## Development and Testing
+
+### Customizing the Site
+
+The entrypoint for customizing the Site is the `site.toml` file.
+
+You can customize for example the *name* of the site.
+
+By default this is located in the `src/config` folder. You can change the default `config` folder via the `SITE_CONFIG` environment variable. For example by setting it to `src/config_prod`.
+
+### Adding More Apps
+
+You create a new app by adding it as a subfolder to the `src/apps` folder and then configuring the new app in the `applications.toml` file.
+
+To define and serve the app you need to add it to the `applications.toml` file.
+
+- If you need to add a new Author or Owner you can add him or her via the `persons.toml` file.
+
+#### Best Practice for adding Apps
+
+- Don't place single files directly in `src/apps`
+- Don't nest your apps further into for example `src/apps/football/messi/` and `src/apps/football/ronaldo/`. Instead use `src/apps/football_messi/` and `src/apps/football_ronaldo/`.
+- Name the main file of your app `app.py`
+- Always place app related tests directly in the app folder either as a single `test.py` file or as a `test` subfolder.
+- Always add `__init__.py` in your app and test folders. Tools like `pytest`, `mypy` and `pylint` need them for "navigating" your project.
+- Always clean all notebooks before `git commit`. Follow the guide [How to clear the Jupyter Notebook outputs automatically?](https://medium.com/somosfit/version-control-on-jupyter-notebooks-6b67a0cf12a3) or manually clean your notebooks using `invoke notebook.clean`.
+
+This will provide the best experience for navigation, continued development, maintainence, refactoring and moving apps when your site grows.
+
+- If the app is a single file. Just add that single file.
+- If the app consists of multiple files. Just add a subfolder with the files.
+
+### Remember to Update the Package Requirements
+
+Please note that if start using additional packages, then they should be added to the the relevant file in the `requirements/base.txt` file.
+
+It's recommended to freeze the version. For example to `plotly==4.14.1`.
+
+## Using Static assets
+
+For convenience the site is configured to serve any assets in the `src/assets` folder. This means that you can refer to for example `assets/images/thumbnails/gallery.png` in ..html and or .toml files.
+
+When your site grows and needs more assets its often recommended to store and serve them seperately from your site. But it might not be the fastest solution, c.f. [Self-host Your Static Assets](https://css-tricks.com/self-host-your-static-assets/). But at least storing the assets somewhere differently than in your repo might speed up cloning your repo.
+
+## Customizing the Menu
+
+By default any app added to the `applications.toml` file will be added to the menu in the sidebar of the `templates`.
+
+If you want to customize this further your can do this in the `src/shared/_menu.py` file.
 
 ### The Command Line Interface (CLI)
 
@@ -121,14 +214,6 @@ Available 'code' tasks:
 
 The best practice is to run `invoke test.all` and fix all errors before mergin to your MASTER branch and deploying. That will help you develop a Panel site which works and is long term maintainable.
 
-## Remember to Update the Package Requirements
-
-Please note that if you add new features to the the project that depends on one or more not already required Python packages, then those requirements should be added manually to the the relevant file in the `requirements` folder.
-
-## Build and Publish
-
-We use Azure DevOps for build and deployment. You can use find the pipelines [here](https://dev.azure.com/dongenergy-p/TradingAnalytics/_build?definitionScope=%5Cus-trading).
-
 ## Docker
 
 The **build process** consist of building 3 images
@@ -163,17 +248,14 @@ For more information on available ```Invoke docker.*``` commands use the ```--li
 
 ## Deployment
 
-The API is currently not deployed as a seperate python package
+Deployment can be a complex topic. The most important resources for deployment are
 
-## Versioning
-
-We currently don't version this package.
+- [Panel Server Deployment](https://panel.holoviz.org/user_guide/Server_Deployment.html)
+- [Bokeh Settings](https://docs.bokeh.org/en/latest/docs/reference/settings.html).
 
 ## Contributing
 
-If you are an Ørsted employee or consultant then feel free to contribute.
-
-Please discuss or inform the Lead Platform Architect of important design decissions.
+You are very welcome to contribute to this repo via Bugs, Feature Requests and Pull Requests.
 
 ## Authors
 
@@ -181,9 +263,9 @@ Please discuss or inform the Lead Platform Architect of important design decissi
 
 ## License
 
-This project is owned by Ørsted CS Market Trading and can be used and modified by Ørsted employees or consultants only.
+Apache 2
 
-[Azure DevOps Build Pipelines](https://dongenergy-p.visualstudio.com/TradingAnalytics/_build)
+This was chosen since I like to citation as the creator of this. If the license is a problem for you let me know and we will find a solution.
 
 ## Kubernetes
 
@@ -198,3 +280,30 @@ and similarly for `test` and `prod` environments.
 ```bash
 kubectl create secret generic ta-environment-prod --from-file=config.prod.ini
 ```
+
+### Roadmap
+
+Must Have
+
+- give project a nice name
+- add instructions for installing via Conda
+- add logging
+- To enable providing bug fixes and more features Move
+  - the SiteConfig model to the awesome-panel-extensions package
+  - the invoke tasks code to the awesome-panel-extensions package
+- add instructions, files and commands for deployment.
+- enable configuring docker via pyproject.toml file
+- Create a tour of the project video
+
+Nice to Have
+
+- add more app examples including ipywidgets examples
+  - Lots of independent Plots with widgets layed out in list. Traders wants this.
+  - Machine Learning App. Just to show how well this use case is supported.
+- add command to easily serve a specific app: `invoke app.serve streaming_plots`
+- add command to easily add a new app: `invoke app.add my_new_app`
+- add flags `--dev --show` to `site.serve` and `app.serve` to enable server to reload when files changes.
+- add docs app
+- add rest api example
+- restructure awesome-panel.org to follow the layout of this starter more precisely
+- add support for Streamlit and Dash apps (if technically possible)

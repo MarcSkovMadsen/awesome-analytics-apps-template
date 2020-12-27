@@ -2,10 +2,13 @@
 
 - config: An instance of SiteConfig holding the current Site configuration
 """
+import os
 import pathlib
 
-from ._config import _create_site_config
+from src.shared._config import _create_site_config
 
-CONFIG_ROOT = pathlib.Path(__file__).parent.parent / "config"
-
-config = _create_site_config(config_root=CONFIG_ROOT)
+_SITE_CONFIG_STR = os.getenv("SITE_CONFIG")
+if _SITE_CONFIG_STR:
+    config = _create_site_config(config_root=_SITE_CONFIG_STR)
+else:
+    config = _create_site_config(config_root=pathlib.Path(__file__).parent.parent / "config")

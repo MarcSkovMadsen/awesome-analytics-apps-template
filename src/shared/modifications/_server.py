@@ -1,5 +1,5 @@
-"""This module provides various hacks, worksarounds and modifications for things that Panel
-not yet supports"""
+"""This module provides various modifies the Panel `get_server` function to enable the site to
+serve .py and .ipynb files."""
 # pylint: skip-file
 from __future__ import absolute_import, division, unicode_literals
 

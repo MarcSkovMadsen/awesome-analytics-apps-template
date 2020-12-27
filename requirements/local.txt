@@ -2,5 +2,4 @@
 -r ./test.txt
 
 notebook==6.1.5
-
-# Hack for now trading_analytics package needs to update version
+jupyterlab==2.2.9 # pyviz/jupyterlab_pyviz does not yet support 3.0

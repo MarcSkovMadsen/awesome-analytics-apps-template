@@ -23,6 +23,8 @@ class SiteConfig(param.Parameterized):
 
     site_name = param.String("Awesome Panel Starter")
 
+    gallery_description = param.String("Search and find your app or other resource")
+
     color_primary = param.String("#A01346")
     color_cycle = param.List(["#A01346"])
 
