@@ -62,7 +62,23 @@ pip install -r requirements/local.txt
 
 ### Install using Conda
 
-COMING UP
+```bash
+conda create --name mysite
+```
+
+You can of course replace `mysite` with the name you prefer.
+
+```bash
+conda activate mysite
+```
+
+```bash
+conda install pip
+```
+
+```bash
+python -m  pip install -r requirements/local.txt
+```
 
 ### Enabling Jupyterlab
 
@@ -301,23 +317,22 @@ kubectl create secret generic ta-environment-prod --from-file=config.prod.ini
 
 ### Roadmap
 
-Must Have
-
-- add instructions for installing via Conda
-- add logging
-- add instructions, files and commands for deployment.
-- enable configuring docker via pyproject.toml file
 - Create a tour of the project video
-
-Nice to Have
-
-- add more app examples including ipywidgets examples
-  - Lots of independent Plots with widgets layed out in list. Traders wants this.
-  - Machine Learning App. Just to show how well this use case is supported.
-- add command to easily serve a specific app: `invoke app.serve streaming_plots`
 - add command to easily add a new app: `invoke app.add my_new_app`
+- add logging
+- improve menu generation to highlight active page
+- Document FastListTemplate and FastGridTemplate
+- add docs and examples on deployments
+- add more app examples including ipywidgets examples
+  - Lots of independent Plots with widgets layed out in list.
+  - Machine Learning App. Just to show how well this use case is supported.
+  - Show how to use css only (not template in notebook).
+- add command to easily serve a specific app: `invoke app.serve streaming_plots`
 - add flags `--dev --show` to `site.serve` and `app.serve` to enable server to reload when files changes.
 - add docs app
 - add rest api example
 - restructure awesome-panel.org to follow the layout of this starter more precisely
+- Add more templates: MarkdownTemplate, HTMLTemplate, AccordianTemplate
+- Improve the instructions for installing via Conda.
+  - I'm not normally a Conda user so contributions are very welcome.
 - add support for Streamlit and Dash apps (if technically possible)

@@ -18,13 +18,11 @@ def _read_sections():
     return sections
 
 
-SECTIONS = _read_sections()
-
-
 def view():
     """Returns the landing page of the site"""
     pn.config.sizing_mode = "stretch_width"
-    return ListTemplate(title="Home", main=SECTIONS, main_max_width="900px")
+    sections = _read_sections()
+    return ListTemplate(title="Home", main=sections, main_max_width="900px")
 
 
 if __name__.startswith("bokeh"):

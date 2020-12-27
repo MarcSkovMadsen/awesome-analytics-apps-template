@@ -1,5 +1,5 @@
 # Core packages used to configure and run the site
-awesome-panel-extensions==20201227.1 # Templates etc.
+awesome-panel-extensions==20201227.2 # Templates etc.
 invoke==1.4.1 # Invoke is a Python task execution tool & library. See http://www.pyinvoke.org/
 
 # Used by the apps
@@ -15,3 +15,4 @@ ipyleaflet==0.13.3
 ipywidgets==7.6.1
 gpxpy==1.4.2
 srtm.py==0.3.6
+k3d==2.9.1
