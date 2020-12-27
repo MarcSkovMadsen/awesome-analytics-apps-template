@@ -3,6 +3,8 @@ from invoke import Collection
 
 from . import docker, notebook, site, test
 
+docker.read_config_from_toml("pyproject.toml")
+
 # pylint: disable=invalid-name
 # as invoke only recognizes lower case
 namespace = Collection()

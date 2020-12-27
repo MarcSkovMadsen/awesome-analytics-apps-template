@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: us-trading-panel
-  namespace: odl-trading-analytics-ns
+  name: awesome-analytics-app-template
+  namespace: <your-name-space-here>
   labels:
-    app: us-trading-panel
-    env: dev
+    app: awesome-analytics-app-template
+    env: prod
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: us-trading-panel
+      app: awesome-analytics-app-template
   template:
     metadata:
       labels:
-        app: us-trading-panel
-        env: dev
+        app: awesome-analytics-app-template
+        env: prod
     spec:
       containers:
-      - name: us-trading
-        image: datalakek8sacrdev.azurecr.io/trading-analytics/us-trading:latest
+      - name: awesome-analytics-app-template
+        image: registry.hub.docker.com/awesome-analytics-apps-template:latest
         ports:
         - containerPort: 5007
         resources:
@@ -32,9 +32,7 @@ spec:
         command:
           - python
         env:
-          - name: TA_CONFIG_FILE
-            value: /app/trading_analytics/.environment/config.dev.ini
           - name: BOKEH_ALLOW_WS_ORIGIN
-            value: trading-analytics-dev.de-prod.dk
+            value: <your-domain.com>
         args:
-          - sites/panel/app.py
+          - src/site.py

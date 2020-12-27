@@ -1,5 +1,5 @@
 # Image: site-test:latest
-FROM registry.hub.docker.com/awsome-panel-starter:latest
+FROM registry.hub.docker.com/awesome-analytics-apps-template:latest
 
 # Install test requirements
 RUN pip install -r requirements/test.txt

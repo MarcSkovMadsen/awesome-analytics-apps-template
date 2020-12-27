@@ -2,10 +2,13 @@
 
 import setuptools
 
+# Basic requirements to run the site
 install_requires = [
+    "setuptools",
     "awesome-panel-extensions==20201221.1",  # Templates etc.
+    "invoke==1.4.1",  # Invoke is a Python task execution tool & library. See http://www.pyinvoke.org/
 ]
-
+# Required by the apps
 _apps = [
     "pandas==1.1.5",
     "holoviews==1.14.0",
@@ -13,30 +16,23 @@ _apps = [
     "plotly==4.14.1",
     "altair==4.1.0",
     "streamz==0.6.1",
-    "bqplot=0.12.19",
-    "ipyleaflet=0.13.3",
-    "ipywidgets=7.6.1",
-    "gpxpy=1.4.2",
-    "srtm.py=0.3.6",
+    "bqplot==0.12.19",
+    "ipyleaflet==0.13.3",
+    "ipywidgets==7.6.1",
+    "gpxpy==1.4.2",
+    "srtm.py==0.3.6",
     "ipywidgets_bokeh==1.0.2",  # To enable using IPyWidgets
 ]
+# For working in jupyter notebook or jupyter lab
 _jupyter = [
-    # For working in jupyter notebook or jupyter lab
     "notebook==6.1.5",
     "jupyterlab==2.2.9",  # pyviz/jupyterlab_pyviz does not yet support 3.0
     "jupyter_contrib_nbextensions==0.5.1",  # To enable cleaning jupyter notebooks
 ]
 _tests = [
-    # Utils
-    # ------------------------------------------------------------------------------
-    "invoke==1.4.1",  # Invoke is a Python task execution tool & library. See http://www.pyinvoke.org/
-    # Testing
-    # ------------------------------------------------------------------------------
     "pytest==6.2.1",  # The pytest framework makes it easy to write tests. See https://github.com/pytest-dev/pytest
     "pytest-cov==2.10.1",  # Test coverage. See https://pypi.org/project/pytest-cov/
-    # Code quality
-    # ------------------------------------------------------------------------------
-    "isort==5.6.4",  # Sort import statements. We need 4.3.15 to correctly sort dataclasses
+    "isort==5.6.4",  # Sort import statements.
     "pylint==2.6.0",  # Linter.
     "pylint2junit==1.0.1",  # Used to generate junit xml reports in azure pipelines https://pypi.org/project/pylint2junit/
     "black==20.8b1",  # Auto formatter.
@@ -53,6 +49,7 @@ extras_require = {
 }
 
 extras_require["all"] = sorted(set(sum(extras_require.values(), [])))
+print(extras_require)
 
 setuptools.setup(
     name="awesome-analytics-apps-template",

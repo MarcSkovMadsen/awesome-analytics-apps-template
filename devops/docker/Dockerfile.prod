@@ -1,4 +1,4 @@
-FROM registry.hub.docker.com/awesome-panel-starter-base:latest
+FROM registry.hub.docker.com/awesome-analytics-apps-template-base:latest
 
 ADD . ./
 

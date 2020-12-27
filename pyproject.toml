@@ -1,2 +1,8 @@
 [tool.black]
 line-length = 100
+
+[docker]
+registry = "registry.hub.docker.com"
+image_base = "awesome-analytics-apps-template-base"
+image_prod = "awesome-analytics-apps-template"
+image_test = "awesome-analytics-apps-template-test"

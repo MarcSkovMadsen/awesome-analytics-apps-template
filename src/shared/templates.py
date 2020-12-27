@@ -15,16 +15,16 @@ from awesome_panel_extensions.frameworks.fast.templates.fast_gallery_template im
 from awesome_panel_extensions.frameworks.fast.templates.fast_grid_template import (
     FastGridTemplate as _FastGridTemplate,
 )
-from awesome_panel_extensions.frameworks.fast.templates.fast_template import (
-    FastTemplate as _FastTemplate,
+from awesome_panel_extensions.frameworks.fast.templates.fast_list_template import (
+    FastListTemplate as _FastListTemplate,
 )
 
 from src.shared import config
 from src.shared._menu import MENU
 
 
-class ListTemplate(_FastTemplate):
-    __doc__ = _FastTemplate.__doc__
+class ListTemplate(_FastListTemplate):
+    __doc__ = _FastListTemplate.__doc__
 
     site = param.String(config.site_name)
     sidebar_footer = param.String(MENU)

@@ -5,15 +5,38 @@ invoke --list=docker
 from the command line for a list of all available commands.
 """
 import os
+import pathlib
 import subprocess
 from dataclasses import dataclass
-from typing import List
+from typing import List, Union
+
+import toml
 
 # pylint: disable=invalid-name
 # because Invoke uses 'c' for the Invoke command object
 from invoke import task
 
-from . import config
+REGISTRY = "registry.hub.docker.com"
+IMAGE_BASE = "base"
+IMAGE_PROD = "prod"
+IMAGE_TEST = "test"
+
+
+def read_config_from_toml(path: Union[str, pathlib.Path]):
+    """Reads the configuration from a .toml file. For example pyproject.toml"""
+    if isinstance(path, str):
+        path = pathlib.Path(path)
+    config = toml.load(path)
+
+    if "docker" in config:
+        config = config["docker"]
+        # pylint: disable=global-statement
+        global REGISTRY, IMAGE_BASE, IMAGE_PROD, IMAGE_TEST, IMAGES
+        REGISTRY = config.get("registry", REGISTRY)
+        IMAGE_BASE = config.get("image_base", IMAGE_BASE)
+        IMAGE_PROD = config.get("image_prod", IMAGE_PROD)
+        IMAGE_TEST = config.get("image_test", IMAGE_TEST)
+        IMAGES = _get_images()
 
 
 def _build(  # pylint: disable=too-many-arguments
@@ -63,7 +86,7 @@ class Image:
     docker_file: str
     context: str
     dependencies: List
-    registry: str = config.DOCKER_REGISTRY
+    registry: str
 
     @property
     def image(self) -> str:
@@ -87,33 +110,37 @@ class Image:
         return f"{registry}/{self.name}"
 
 
-IMAGES = {
-    "base": Image(
-        docker_file="devops/docker/Dockerfile.base",
-        name=config.DOCKER_IMAGE_BASE,
-        context="requirements",
-        dependencies=[],
-        registry=config.DOCKER_REGISTRY,
-    ),
-    "prod": Image(
-        docker_file="devops/docker/Dockerfile.prod",
-        name=config.DOCKER_IMAGE_PROD,
-        context=".",
-        dependencies=["base"],
-        registry=config.DOCKER_REGISTRY,
-    ),
-    "test": Image(
-        docker_file="devops/docker/Dockerfile.test",
-        name=config.DOCKER_IMAGE_TEST,
-        context=".",
-        dependencies=["prod"],
-        registry=config.DOCKER_IMAGE_TEST,
-    ),
-}
+def _get_images():
+    return {
+        "base": Image(
+            docker_file="devops/docker/Dockerfile.base",
+            name=IMAGE_BASE,
+            context="requirements",
+            dependencies=[],
+            registry=REGISTRY,
+        ),
+        "prod": Image(
+            docker_file="devops/docker/Dockerfile.prod",
+            name=IMAGE_PROD,
+            context=".",
+            dependencies=["base"],
+            registry=REGISTRY,
+        ),
+        "test": Image(
+            docker_file="devops/docker/Dockerfile.test",
+            name=IMAGE_TEST,
+            context=".",
+            dependencies=["prod"],
+            registry=REGISTRY,
+        ),
+    }
+
+
+IMAGES = _get_images()
 
 
 @task
-def build(c, image="prod", tag="latest", registry=config.DOCKER_REGISTRY, rebuild=False):
+def build(c, image="prod", tag="latest", registry=REGISTRY, rebuild=False):
     """Build Docker image
 
     Arguments:
@@ -142,9 +169,7 @@ def build(c, image="prod", tag="latest", registry=config.DOCKER_REGISTRY, rebuil
 
 
 @task
-def run(
-    c, image="prod", tag="latest", config_file=config.CONFIG_FILE_PATH
-):  # pylint: disable=unused-argument
+def run(c, image="prod", tag="latest", config_file=""):  # pylint: disable=unused-argument
     """Run the (prod) Docker image interactively.
 
     Arguments:
@@ -164,19 +189,23 @@ Running the '{image}:{tag}' Docker image
     )
     image_configuration = IMAGES.get(image, IMAGES["prod"])  # We use the backend image by default
 
-    command = (
-        f"docker run --env CONFIG_FILE={config_file} -p 8050:8050 "
-        f"-it {config.DOCKER_REGISTRY}/{image_configuration.name}:{tag}"
-    )
+    if config_file:
+        command = (
+            f"docker run --env CONFIG_FILE={config_file} -p 8050:8050 "
+            f"-it {image_configuration.registry}/{image_configuration.name}:{tag}"
+        )
+    else:
+        command = (
+            f"docker run -p 8050:8050 "
+            f"-it {image_configuration.registry}/{image_configuration.name}:{tag}"
+        )
     print(command)
     subprocess.run(command, check=True)
 
 
-@task(aliases=("panel",))
-def run_panel_server(
-    c, image="prod", tag="latest", config_file=config.CONFIG_FILE_PATH
-):  # pylint: disable=unused-argument
-    """Run the Panel apps.
+@task()
+def serve(c, image="prod", tag="latest"):  # pylint: disable=unused-argument
+    """Start the serve and serve the apps.
 
     Arguments:
         c {[type]} -- Invoke command object
@@ -196,7 +225,7 @@ Running the '{image}:{tag}' Docker image
     image_configuration = IMAGES.get(image, IMAGES["prod"])
     command = (
         f"docker run -it -p 80:80 --entrypoint python "
-        f"{config.DOCKER_REGISTRY}/{image_configuration.name}:{tag} sites/panel/app.py"
+        f"{image_configuration.registry}/{image_configuration.name}:{tag} sites/panel/app.py"
     )
     print(command)
     subprocess.run(command, check=True)

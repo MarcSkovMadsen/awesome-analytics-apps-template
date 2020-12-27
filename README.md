@@ -28,6 +28,16 @@ It will help a lot if you have experience
 - working on the command line
 - working with virtual environments
 
+If you want to use Docker then you will need to install [Docker Desktop](https://www.docker.com/products/docker-desktop).
+
+### Cloning the Template
+
+Go to the [awesome-analytics-apps-template](https://github.com/MarcSkovMadsen/awesome-analytics-apps-template) and either "Clone", "Download ZIP" or "Use this template".
+
+![Git Template](assets/images/github-template.png)
+
+When done **navigate to the root** of the project.
+
 ### Install Using Pip
 
 Move to the **root of the project**. Create a virtual environment named **.venv**.
@@ -36,7 +46,7 @@ Move to the **root of the project**. Create a virtual environment named **.venv*
 python -m venv .venv
 ```
 
-Activate the virtual environment using something like `source .venv/Scripts/activate` (bash) or `.venv/Scrips/activate` (cmd.exe).
+Activate the virtual environment using something like `source .venv/Scripts/activate` (bash) or `call .venv/Scripts/activate` (cmd.exe).
 
 Update pip
 
@@ -173,16 +183,23 @@ We use [Invoke](http://docs.pyinvoke.org/) as a cli/ task runner to speed up our
 $ invoke --list
 Available tasks:
 
-  test.all (test.pre-commit, test.test)   Runs isort, black pylint, mypy and pytest
-  test.black                              Runs black (autoformatter) on all .py files recursively
-  test.isort                              Runs isort (import sorter) on all .py files recursively
-  test.mypy                               Runs mypy (static type checker) on all .py files recursively
-  test.pylint                             Runs pylint (linter) on all .py files recursively to identify coding errors
-  test.pytest                             Runs pytest to identify failing tests
-  docker.build                            Build Docker image
-  docker.export-test-results              Copies the test_results from the api_test image to the local folder 'test_results'
-  docker.run                              Run the (api) Docker image interactively.
-  docker.test                             Run the pre-commit tests inside the docker container
+  docker.build                          Build Docker image
+  docker.export-test-results            Copies the test_results from the test image to the local folder 'test_results'
+  docker.run                            Run the (prod) Docker image interactively.
+  docker.serve                          Start the serve and serve the apps.
+  docker.system-prune                   The docker system prune command will free up space
+  docker.test                           Run the pre-commit tests inside the docker container
+  notebook.clean-all (notebook.clean)   Strips all notebooks of output.
+  site.serve                            Starts the Panel server and serves the apps
+  test.all                              Runs isort, autoflake, black, pylint, mypy and pytest
+  test.autoflake                        Runs autoflake to remove unused imports on all .py files recursively
+  test.bandit                           Runs Bandit the security linter from PyCQA.
+  test.black                            Runs black (autoformatter) on all .py files recursively
+  test.isort                            Runs isort (import sorter) on all .py files recursively
+  test.mypy                             Runs mypy (static type checker) on all .py files recursively
+  test.pylint                           Runs pylint (linter) on all .py files recursively to identify coding errors
+  test.pytest                           Runs pytest to identify failing tests
+  test.show-coverage                    Open the code coverage report in a browser
 ```
 
 ## Code Quality
@@ -201,40 +218,41 @@ To ensure a high coding standard we use
 We have setup *invoke* commands for ease of command line use. For available commands See
 
 ```bash
-$ invoke --list=code
-Available 'code' tasks:
+$ invoke --list=test
+Available 'test' tasks:
 
-  .all (.pre-commit)   Runs isort, black pylint, mypy and pytest
-  .black               Runs black on all .py files recursively
-  .isort               Runs isort on all .py files recursively
-  .mypy                Runs mypy on all .py files recursively
-  .pylint              Runs pylint on all .py files recursively
-  .pytest              Runs pytest
+  .all             Runs isort, autoflake, black, pylint, mypy and pytest
+  .autoflake       Runs autoflake to remove unused imports on all .py files recursively
+  .bandit          Runs Bandit the security linter from PyCQA.
+  .black           Runs black (autoformatter) on all .py files recursively
+  .isort           Runs isort (import sorter) on all .py files recursively
+  .mypy            Runs mypy (static type checker) on all .py files recursively
+  .pylint          Runs pylint (linter) on all .py files recursively to identify coding errors
+  .pytest          Runs pytest to identify failing tests
+  .show-coverage   Open the code coverage report in a browser
 ```
 
-The best practice is to run `invoke test.all` and fix all errors before mergin to your MASTER branch and deploying. That will help you develop a Panel site which works and is long term maintainable.
+The best practice is to run `invoke test.all` and fix all errors before any commit. That will help you develop code which works and is long term maintainable.
 
 ## Docker
 
 The **build process** consist of building 3 images
 
-api_base -> api -> api_test
+`base` -> `prod` -> `test`
 
-- api_base contains the basic requirements. It takes a long time to build but does not need to be rebuilt often.
-- api contains the api_base image and the package
-- api_test is build from the api image, adds and runs the tests and saves test results in the folder /app/test_results. The test results are in the junit format so that they can be published and inspected in Azure Devops.
+- `base` contains the basic requirements. It takes a long time to build but does not need to be rebuilt often.
+- `prod` contains the base image and the package
+- `test` is build from the prod image, runs the tests and saves test results in the folder /app/test_results. The test results are in the junit format so that they can be published and inspected in Azure Devops.
 
-With a **local installation of Docker** you can replicate the Azure Pipelines build and test pipeline locally.
-
-To build the api image locally run
+To build the prod image locally run
 
 ```bash
 invoke docker.build
 ```
 
-This will be using cached images and layers.
+This will be using cached images and layers. The first time you run this you will need to add the `--rebuild` flag to build the `base` image initially.
 
-To run the tests inside the api image and export the results to ```./test_results``` run
+To run the tests inside the prod image and export the results to ```./test_results``` run
 
 ```bash
 invoke docker.test
@@ -242,7 +260,7 @@ invoke docker.test
 
 The above commands builds using the cached layers and images, i.e. it is fast. It is not as fast as running the tests locally via the command ```invoke test.all``` though.
 
-Sometimes you need to build from scratch, then you should add the ```--rebuild``` flag.
+When you need to build from scratch, then you should add the ```--rebuild``` flag.
 
 For more information on available ```Invoke docker.*``` commands use the ```--list``` and ```--help``` flags.
 
@@ -259,7 +277,7 @@ You are very welcome to contribute to this repo via Bugs, Feature Requests and P
 
 ## Authors
 
-- Marc Skov Madsen ([Email](mailto:masma@orsted.dk), [LinkedIn](https://www.linkedin.com/in/marcskovmadsen/))
+- Marc Skov Madsen ([Email](mailto:marc.skov.madsen@gmail.com), [LinkedIn](https://www.linkedin.com/in/marcskovmadsen/))
 
 ## License
 
@@ -285,12 +303,8 @@ kubectl create secret generic ta-environment-prod --from-file=config.prod.ini
 
 Must Have
 
-- give project a nice name
 - add instructions for installing via Conda
 - add logging
-- To enable providing bug fixes and more features Move
-  - the SiteConfig model to the awesome-panel-extensions package
-  - the invoke tasks code to the awesome-panel-extensions package
 - add instructions, files and commands for deployment.
 - enable configuring docker via pyproject.toml file
 - Create a tour of the project video
