@@ -22,4 +22,6 @@ ADD . ./requirements/
 RUN pip install pip==20.3.3 && pip install --no-cache-dir -r requirements/production.txt &&\
     rm -rf requirements
 
+RUN bokeh sampledata
+
 ENTRYPOINT [ "bash" ]

@@ -1,11 +1,15 @@
 # Awesome Analytics Apps Starter
 
-The purpose of this project is to enable you quickly get up and running building your own site of awesome analytics apps. A site with a look and feel similar to [awesome-panel.org](https://awesome-panel.org).
+The purpose of this project is to enable you and your team to quickly get up and running building your own site of awesome analytics apps using the tools you know and love.
+
+A site with a look and feel similar to [awesome-panel.org](https://awesome-panel.org).
 
 The site can serve apps developed in
 
 - code files (`.py`) or jupyter notebooks (`.ipynb`).
 - Bokeh, Panel or Jupyter IpyWidgets
+
+The bokeh server loads much faster than the Voila server because it does not create and use a new kernel for each session.
 
 ## Installation
 
@@ -321,6 +325,7 @@ kubectl create secret generic ta-environment-prod --from-file=config.prod.ini
 - add command to easily add a new app: `invoke app.add my_new_app`
 - add logging
 - improve menu generation to highlight active page
+- Add examples of resources that open in new tab when clicked in the menu.
 - Document FastListTemplate and FastGridTemplate
 - add docs and examples on deployments
 - add more app examples including ipywidgets examples

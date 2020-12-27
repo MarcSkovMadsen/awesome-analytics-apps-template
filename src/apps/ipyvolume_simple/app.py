@@ -40,7 +40,7 @@ def view():
     template.config.css_files[
         "font-awesome"
     ] = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.css"
-    template.servable()
+    return template
 
 
 if __name__.startswith("bokeh"):
