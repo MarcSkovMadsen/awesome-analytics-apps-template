@@ -309,19 +309,6 @@ Apache 2
 
 This was chosen since I like to citation as the creator of this. If the license is a problem for you let me know and we will find a solution.
 
-## Kubernetes
-
-Our config.*.ini files are deployed to k8s as secrets via
-
-```bash
-kubectl create secret generic ta-environment-dev --from-file=config.dev.ini
-```
-
-and similarly for `test` and `prod` environments.
-
-```bash
-kubectl create secret generic ta-environment-prod --from-file=config.prod.ini
-```
 
 ### Roadmap
 
