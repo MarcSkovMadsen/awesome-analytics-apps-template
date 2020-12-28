@@ -33,6 +33,6 @@ The template is running on top of the Tornado server which is rock solid and sup
 
 ## Maintainability & Scalability
 
-The template has been developed from long term experience developing analytics apps in different frameworks like Angular, Django, Panel and Streamlit.
+The template has been developed from long term experience developing analytics apps in different frameworks like Angular, Dash, Django, Panel and Streamlit.
 
 The template structure and batteries included will enable you to develop, maintain, refactor and scale your site.
