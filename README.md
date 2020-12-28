@@ -9,7 +9,7 @@ The site can serve apps developed in
 - code files (`.py`) or jupyter notebooks (`.ipynb`).
 - Bokeh, Panel or Jupyter IpyWidgets
 
-The bokeh server loads much faster than the Voila server because it does not create and use a new kernel for each session.
+It can also serve pages and apps developed in Markdown, HTML and any Javascript framework. It can even serve REST API endpoints.
 
 [Gif Intro Video](assets/videos/gif/tour.gif)
 
@@ -29,7 +29,7 @@ Below we will describe
 
 It will help a lot if you have experience
 
-- building apps using Bokeh or Panel.
+- building apps using Bokeh, IpyWidgets or Panel.
 - working in
   - an editor or IDE like Spyder, PyCharm or VS Code or
   - a Jupyter Notebook environment.
