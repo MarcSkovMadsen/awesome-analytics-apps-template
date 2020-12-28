@@ -1,4 +1,4 @@
-# Awesome Analytics Apps Starter
+# Awesome Analytics Apps Template
 
 The purpose of this project is to enable you and your team to quickly get up and running building your own site of awesome analytics apps using the tools you know and love.
 
@@ -10,6 +10,10 @@ The site can serve apps developed in
 - Bokeh, Panel or Jupyter IpyWidgets
 
 The bokeh server loads much faster than the Voila server because it does not create and use a new kernel for each session.
+
+[Gif Intro Video](assets/videos/gif/tour.gif)
+
+In this [Youtube Intro video](https://www.youtube.com/embed/QmwSyQqkKvI) I provide an introduction to the Template.
 
 ## Installation
 
