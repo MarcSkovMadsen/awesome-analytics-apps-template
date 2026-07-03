@@ -180,6 +180,7 @@ This will provide the best experience for navigation, continued development, mai
 
 - If the app is a single file. Just add that single file.
 - If the app consists of multiple files. Just add a subfolder with the files.
+- [Mautic](https://www.mautic.org) - Open-source, self-hostable marketing automation platform for campaigns, segmentation, and customer journeys.
 
 ### Remember to Update the Package Requirements
 
